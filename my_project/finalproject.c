@@ -193,8 +193,10 @@ void wdt_c_handler(void)
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (x > 70)
+  if (x >= 70) {
     lvl = 1;
+    update();
+  }
 }
 
 
