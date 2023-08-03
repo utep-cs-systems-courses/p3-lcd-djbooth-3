@@ -17,7 +17,7 @@
 
 short redrawScreen = 1;
 
-int lvl = 4;
+int lvl = 3;
 //int flames = 0;
 
 int x = 1;  // x and y cordinates of the worm (blue block) 
@@ -91,8 +91,8 @@ void lvl2()
   fillRectangle(15, 113, 63, 15, COLOR_RED); //bottom horizontal lava
 }
 
-
-void lvl3()
+/*
+void lvl3()                      //TEST LEVEL//
 {
   clearScreen(COLOR_GREEN);
   
@@ -106,7 +106,7 @@ void lvl3()
   fillRectangle(33, 95, 15, 15, COLOR_RED); //middle bottom block lava
   fillRectangle(0, 145, 63, 15, COLOR_RED); //bottom horizontal lava
 }
-
+*/
 
 void endScreen()
 {
@@ -121,29 +121,7 @@ void endScreen()
 }
 
 void update()
-{
-  /*
-  if (sw1) {
-    y -= 1;
-    fillRectangle(x, y, 15, 15, COLOR_BLUE);
-  }
-  if (sw2) {
-    x -= 1;
-    fillRectangle(x, y, 15, 15, COLOR_BLUE);
-  } 
-  if(sw3) {
-    x += 1;
-    fillRectangle(x, y, 15, 15, COLOR_BLUE);
-  }
-  if (sw4) {
-    y += 1;
-    fillRectangle(x, y, 15, 15, COLOR_BLUE);
-  }
-  */
-  
-  if (x > 70)
-	lvl = 1;
-  
+{ 
   if(1) {
     switch (lvl) {
     case 1:
@@ -157,13 +135,9 @@ void update()
       lvl2();
       break;
     case 3:
-      x = 1;
-      y = 1;
-      lvl3();
-    case 4:
-      endScreen();
       x = 33;
       y = 97;
+      endScreen();
       break;
     default:
       x = 1;
@@ -193,7 +167,7 @@ void wdt_c_handler(void)
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (x >= 70) {
+  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) > 97) && ((y+7) < 112) && (lvl == 3)) {
     lvl = 1;
     update();
   }
