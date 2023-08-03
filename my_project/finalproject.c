@@ -122,6 +122,7 @@ void endScreen()
 
 void update()
 {
+  /*
   if (sw1) {
     y -= 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
@@ -138,6 +139,7 @@ void update()
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
+  */
   
   if (x > 70)
 	lvl = 1;
@@ -160,8 +162,8 @@ void update()
       lvl3();
     case 4:
       endScreen();
-      x = 32;
-      y = 96;
+      x = 33;
+      y = 97;
       break;
     default:
       x = 1;
@@ -175,13 +177,24 @@ void update()
 
 void wdt_c_handler(void)
 {
-  int secCount = 0;
-
-  secCount++;
-  if(secCount >= 25){
-    secCount = 0;
-    redrawScreen = 1;
+  if (sw1) {
+    y -= 1;
+    fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
+  if (sw2) {
+    x -= 1;
+    fillRectangle(x, y, 15, 15, COLOR_BLUE);
+  } 
+  if(sw3) {
+    x += 1;
+    fillRectangle(x, y, 15, 15, COLOR_BLUE);
+  }
+  if (sw4) {
+    y += 1;
+    fillRectangle(x, y, 15, 15, COLOR_BLUE);
+  }
+  if (x > 70)
+    lvl = 1;
 }
 
 
