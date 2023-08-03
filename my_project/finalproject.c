@@ -17,8 +17,7 @@
 
 short redrawScreen = 1;
 
-int lvl = 3;
-//int flames = 0;
+int lvl = 1;
 
 int x = 1;  // x and y cordinates of the worm (blue block) 
 int y = 1;
@@ -84,9 +83,9 @@ void lvl2()
   fillRectangle(1, 1, 15, 15, COLOR_BLUE);    //start of worm
   fillRectangle(17, 129, 15, 31, COLOR_GRAY); //end hole
 
-  fillRectangle(0, 17, 15, 144, COLOR_RED); //left vertical lava
+  fillRectangle(0, 22, 15, 139, COLOR_RED); //left vertical lava
   fillRectangle(113, 0, 16, 160, COLOR_RED); //right vertical lava
-  fillRectangle(15, 17, 63, 15, COLOR_RED); //top horizontal lava
+  fillRectangle(15, 22, 63, 10, COLOR_RED); //top horizontal lava
   fillRectangle(49, 65, 65, 15, COLOR_RED); //middle horizontal lava
   fillRectangle(15, 113, 63, 15, COLOR_RED); //bottom horizontal lava
 }
@@ -148,9 +147,29 @@ void update()
   }
 }
 
+int interrupts = 0;
+int i = 1;
+int cycles= 8000;
 
 void wdt_c_handler(void)
 {
+  //////     SONG TEST  /////////
+  interrupts++;
+
+  if (interrupts == (i*10))
+    {
+      i++;
+      buzzer_set_period(cycles);
+      cycles -= 200;
+    }
+  else if(cycles == 2000)
+    {
+      interrupts = 0;
+      cycles = 8000;
+      i = 1;
+    }
+  /////////////////////////////////
+
   if (sw1) {
     y -= 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
@@ -167,22 +186,68 @@ void wdt_c_handler(void)
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (((x+7) >= 22) & ((y+7) <= 31) && (lvl == 1)) {
+  //                            LVL 1 LIMITS
+  
+  if (((x+7) >= 22) & ((y+7) <= 31) & (lvl == 1)) {
     lvl = 1;
-    update();
+    update();   // top lava for lvl 1
   }
-  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) >= 97) && ((y+7) <= 112) && (lvl == 2)) {
+  if (((x+7) >= 22) & ((x+7) <= 48) & ((y+7) <= 97) & (lvl == 1)) {
     lvl = 1;
-    update();
+    update();  // middle left lava for lvl 1
   }
-  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) >= 97) && ((y+7) <= 112) && (lvl == 2)) {
+  if (((x+7) >= 22) & ((x+7) <= 96) & ((y+7) >= 97) & ((y+7) <= 112) & (lvl == 1)) {
     lvl = 1;
-    update();
+    update();  // middle lava for lvl 1
   }
+  if (((x+7) >= 81) & ((x+7) <= 96) & ((y+7) >= 65) & ((y+7) <= 97) & (lvl == 1)) {
+    lvl = 1;
+    update();   // middle left lava for lvl 1 
+  }
+  if (((y+7) >= 145) & (lvl == 1)) {
+    lvl = 1;
+    update();   // bottom lava for lvl 1 
+  }
+  if (((x+7) >= 49) & ((x+7) <= 80) & ((y+7) >= 81) & ((y+7) <= 96) & (lvl == 1)) {
+    lvl = 2;
+    update();   // goal for lvl 1
+  }
+  
+  //                             LVL 2 LIMITS
+  
+  if (((x+7) <= 15) & ((y+7) >= 22) & (lvl == 2)) {
+    lvl = 2;
+    update();   // left lava for lvl 2
+  }
+  if (((x+7) >= 113) & (lvl == 2)) {
+    lvl = 2;
+    update();  // right lava for lvl 2
+  }
+  if (((x+7) >= 15) & ((x+7) <= 78) & ((y+7) >= 17) & ((y+7) <= 32) & (lvl == 2)) {
+    lvl = 2;
+    update();  // top lava for lvl 2
+  }
+  if (((x+7) >= 49) & ((x+7) <= 114) & ((y+7) >= 65) & ((y+7) <= 80) & (lvl == 2)) {
+    lvl = 2;
+    update();   // middle lava for lvl 2 
+  }
+  if (((x+7) >= 15) & ((x+7) <= 78) & ((y+7) >= 113) & ((y+7) <= 128) & (lvl == 2)) {
+    lvl = 2;
+    update();   // bottom lava for lvl 2 
+  }
+  if (((x+7) >= 17) & ((x+7) <= 32) & ((y+7) >= 129) & ((y+7) <= 160) & (lvl == 2)) {
+    lvl = 3;
+    update();   // goal for lvl 2
+  }
+  
+  //                         END SCREEN LIMITS
   if (((x+7) >= 81) & ((x+7) <= 96) & ((y+7) >= 97) & ((y+7) <= 112) & (lvl == 3)) {
     lvl = 1;
     update();   // lava for end screen 
   }
+
+
+  //                      BOUNDARIES FOR THE SCREEN
   
   if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 1)) {
     lvl = 1;
@@ -217,7 +282,7 @@ void main()
     if(redrawScreen) {
       redrawScreen = 0;
       update();
-    }
+    }    
     P1OUT &= ~LED;	/* led off */
     or_sr(0x10);	/**< CPU OFF */
     P1OUT |= LED;	/* led on */
