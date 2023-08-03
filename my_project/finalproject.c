@@ -69,9 +69,9 @@ void lvl1()
   fillRectangle(1, 1, 15, 15, COLOR_BLUE);    //start of worm
   fillRectangle(49, 81, 31, 15, COLOR_GRAY); //end hole
 
-  fillRectangle(17, 0, 111, 31, COLOR_RED); //top horizontal lava
-  fillRectangle(17, 31, 31, 66, COLOR_RED); //top vertical lava
-  fillRectangle(17, 97, 79, 15, COLOR_RED); //middle horizontal lava
+  fillRectangle(22, 0, 106, 31, COLOR_RED); //top horizontal lava
+  fillRectangle(22, 31, 26, 66, COLOR_RED); //top vertical lava
+  fillRectangle(22, 97, 74, 15, COLOR_RED); //middle horizontal lava
   fillRectangle(81, 65, 15, 32, COLOR_RED); //middle vertical lava
   fillRectangle(0, 145, 128, 15, COLOR_RED); // bottom lava
 }
@@ -167,9 +167,34 @@ void wdt_c_handler(void)
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) > 97) && ((y+7) < 112) && (lvl == 3)) {
+  if (((x+7) >= 22) & ((y+7) <= 31) && (lvl == 1)) {
     lvl = 1;
     update();
+  }
+  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) >= 97) && ((y+7) <= 112) && (lvl == 2)) {
+    lvl = 1;
+    update();
+  }
+  if (((x+7) >= 81) && ((x+7) <= 96) && ((y+7) >= 97) && ((y+7) <= 112) && (lvl == 2)) {
+    lvl = 1;
+    update();
+  }
+  if (((x+7) >= 81) & ((x+7) <= 96) & ((y+7) >= 97) & ((y+7) <= 112) & (lvl == 3)) {
+    lvl = 1;
+    update();   // lava for end screen 
+  }
+  
+  if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 1)) {
+    lvl = 1;
+    update();  // boundaries for lvl 1
+  }
+  if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 2)) {
+    lvl = 2;
+    update();  // boundaries for lvl 2
+  }
+  if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 3)) {
+    lvl = 3;
+    update();  // boundaries for end screen
   }
 }
 
