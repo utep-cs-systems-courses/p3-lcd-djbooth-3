@@ -63,19 +63,20 @@ void
 screen_update_ball()
 {
   for (char axis = 0; axis < 2; axis ++) 
-    if (drawPos[axis] != controlPos[axis]) /* position changed? */
+    if (drawPos[axis] != controlPos[axis]) // position changed? 
       goto redraw;
-  return;			/* nothing to do */
+  return;			// nothing to do 
  redraw:
-  draw_ball(drawPos[0], drawPos[1], COLOR_BLUE); /* erase */
+  draw_ball(drawPos[0], drawPos[1], COLOR_BLUE); // erase 
   for (char axis = 0; axis < 2; axis ++) 
     drawPos[axis] = controlPos[axis];
-  draw_ball(drawPos[0], drawPos[1], COLOR_WHITE); /* draw */
+  draw_ball(drawPos[0], drawPos[1], COLOR_WHITE); // draw 
 }
   
 
 short redrawScreen = 1;
 u_int controlFontColor = COLOR_GREEN;
+
 
 void wdt_c_handler()
 {
@@ -122,7 +123,7 @@ void main()
   enableWDTInterrupts();      /**< enable periodic interrupt */
   or_sr(0x8);	              /**< GIE (enable interrupts) */
   
-  clearScreen(COLOR_BLUE);
+  clearScreen(COLOR_GREEN);
   while (1) {			/* forever */
     if (redrawScreen) {
       redrawScreen = 0;
@@ -133,6 +134,7 @@ void main()
     P1OUT |= LED;	/* led on */
   }
 }
+
 
 void
 screen_update_hourglass()
@@ -166,7 +168,8 @@ update_shape()
   screen_update_ball();
   screen_update_hourglass();
 }
-   
+
+ 
 
 
 void
