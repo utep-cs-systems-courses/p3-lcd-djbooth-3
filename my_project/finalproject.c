@@ -8,9 +8,9 @@
 
 #define LED BIT6		/* note that bit zero req'd for display */
 
-#define SW1 1
-#define SW2 2
-#define SW3 4
+#define SW1 1 
+#define SW2 2 
+#define SW3 4 
 #define SW4 8
 
 #define SWITCHES 15
@@ -147,42 +147,61 @@ void update()
   }
 }
 
+int song = 0;
 int interrupts = 0;
-int i = 1;
-int cycles= 8000;
+int c = 0;
 
 void wdt_c_handler(void)
 {
   //////     SONG TEST  /////////
-  interrupts++;
+  if (song == 0) {       //      turn off songs
+    buzzer_set_period(0);
+  }
+  if (song == 1) {  // song for lvls 
+    interrupts++;
 
-  if (interrupts == (i*10))
-    {
-      i++;
-      buzzer_set_period(cycles);
-      cycles -= 200;
-    }
-  else if(cycles == 2000)
-    {
+    int notes[16] = {1803,1351,1203,1136,1803,1351,1203,1136,1702,1351,1203,1702,1351,1203,1136,0};
+    int n = 16;
+
+    buzzer_set_period(notes[c]);
+    
+    if (interrupts >= 250) {
       interrupts = 0;
-      cycles = 8000;
-      i = 1;
+      c++;
     }
+    if(c == 16)
+      c = 0;
+  }
+  if (song == 2) {  // song for end screen
+    interrupts++;  
+
+    int notes[8] = {6067,5405,4819,4545,4049,3607,3214,3033};
+    int n = 8;
+
+    buzzer_set_period(notes[c]);
+    
+    if (interrupts >= 30) {
+      interrupts = 0;
+      c++;
+    }
+    if(c == 8)
+      c = 0;
+  }
   /////////////////////////////////
 
-  if (sw1) {
-    y -= 1;
+  if (sw1) {  //  up switch
+    y -= 1;  
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (sw2) {
+  if (sw2) { // left switch
     x -= 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   } 
-  if(sw3) {
+  if(sw3) {  // right switch 
     x += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
-  if (sw4) {
+  if (sw4) {  // down switch
     y += 1;
     fillRectangle(x, y, 15, 15, COLOR_BLUE);
   }
@@ -190,26 +209,32 @@ void wdt_c_handler(void)
   
   if (((x+7) >= 22) & ((y+7) <= 31) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();   // top lava for lvl 1
   }
   if (((x+7) >= 22) & ((x+7) <= 48) & ((y+7) <= 97) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();  // middle left lava for lvl 1
   }
   if (((x+7) >= 22) & ((x+7) <= 96) & ((y+7) >= 97) & ((y+7) <= 112) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();  // middle lava for lvl 1
   }
   if (((x+7) >= 81) & ((x+7) <= 96) & ((y+7) >= 65) & ((y+7) <= 97) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();   // middle left lava for lvl 1 
   }
   if (((y+7) >= 145) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();   // bottom lava for lvl 1 
   }
   if (((x+7) >= 49) & ((x+7) <= 80) & ((y+7) >= 81) & ((y+7) <= 96) & (lvl == 1)) {
     lvl = 2;
+    buzzer_set_period(5000);
     update();   // goal for lvl 1
   }
   
@@ -217,48 +242,66 @@ void wdt_c_handler(void)
   
   if (((x+7) <= 15) & ((y+7) >= 22) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();   // left lava for lvl 2
   }
   if (((x+7) >= 113) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();  // right lava for lvl 2
   }
   if (((x+7) >= 15) & ((x+7) <= 78) & ((y+7) >= 17) & ((y+7) <= 32) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();  // top lava for lvl 2
   }
   if (((x+7) >= 49) & ((x+7) <= 114) & ((y+7) >= 65) & ((y+7) <= 80) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();   // middle lava for lvl 2 
   }
   if (((x+7) >= 15) & ((x+7) <= 78) & ((y+7) >= 113) & ((y+7) <= 128) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();   // bottom lava for lvl 2 
   }
   if (((x+7) >= 17) & ((x+7) <= 32) & ((y+7) >= 129) & ((y+7) <= 160) & (lvl == 2)) {
     lvl = 3;
+    buzzer_set_period(5000);
     update();   // goal for lvl 2
+  }
+  if(song == 1 & lvl == 3) {
+    song = 2;
+    interrupts = 0;  //      song change for endscreen
+    c = 0;
   }
   
   //                         END SCREEN LIMITS
   if (((x+7) >= 81) & ((x+7) <= 96) & ((y+7) >= 97) & ((y+7) <= 112) & (lvl == 3)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();   // lava for end screen 
   }
+
+  if (song == 2 & lvl == 1)
+    song = 1;             // song change for lvls
 
 
   //                      BOUNDARIES FOR THE SCREEN
   
   if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 1)) {
     lvl = 1;
+    buzzer_set_period(500);
     update();  // boundaries for lvl 1
   }
   if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 2)) {
     lvl = 2;
+    buzzer_set_period(500);
     update();  // boundaries for lvl 2
   }
   if ((((x+7) < 0) | ((x+7)  > 128) | ((y+7) < 0) | ((y+7) > 160)) & (lvl == 3)) {
     lvl = 3;
+    buzzer_set_period(500);
     update();  // boundaries for end screen
   }
 }
