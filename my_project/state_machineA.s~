@@ -1,0 +1,49 @@
+	.text
+
+	.extern lvl
+	.extern x
+	.extern y
+	.extern lvl1
+	.extern lvl2
+	.extern endScreen
+JT:                        	;Jump Table setup
+	.word default
+	.word case1
+	.word case2
+	.word case3
+
+	.global update
+
+update:
+	mov &lvl, r12
+	cmp #4, r12
+	jge default
+	add r12, r13
+	mov JT(r12), r0
+
+case1:
+	mov #1, &x
+	mov #1, &y
+	call #lvl1
+	jmp esac
+
+case2:
+	mov #1, &x
+	mov #1, &y
+	call #lvl2
+	jmp esac
+
+case3:
+	mov #33, &x
+	mov #97, &y
+	call #endScreen
+	jmp esac
+
+default:
+	mov #1, &x
+	mov #1, &y
+	call #lvl1
+	jmp esac
+
+esac:
+	pop r0

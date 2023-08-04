@@ -1,0 +1,10 @@
+#ifndef STATE_MACHINE_INCLUDED
+#define STATE_MACHINE_INCLUDED
+
+void update();
+
+extern int lvl;
+extern int x;
+extern int y;
+
+#endif

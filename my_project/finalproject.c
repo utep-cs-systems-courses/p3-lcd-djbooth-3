@@ -3,17 +3,12 @@
 #include "lcdutils.h"
 #include "lcddraw.h"
 #include "buzzer.h"
+#include "switches.h"
+#include "state_machineC.h"
 
-// WARNING: LCD DISPLAY USES P1.0.  Do not touch!!! 
-
-#define LED BIT6		/* note that bit zero req'd for display */
-
-#define SW1 1 
-#define SW2 2 
-#define SW3 4 
-#define SW4 8
-
-#define SWITCHES 15
+/////////////
+//switches.h  (where it used to be before i moved it)
+////////////
 
 short redrawScreen = 1;
 
@@ -22,44 +17,9 @@ int lvl = 1;
 int x = 1;  // x and y cordinates of the worm (blue block) 
 int y = 1;
 
-char sw1 = 0;  
-char sw2 = 0;
-char sw3 = 0;
-char sw4 = 0;
-
-static char 
-switch_update_interrupt_sense()
-{
-  char p2val = P2IN;
-  /* update switch interrupt to detect changes from current buttons */
-  P2IES |= (p2val & SWITCHES);	/* if switch up, sense down */
-  P2IES &= (p2val | ~SWITCHES);	/* if switch down, sense up */
-  return p2val;
-}
-
-void 
-switch_init()			/* setup switch */
-{  
-  P2REN |= SWITCHES;		/* enables resistors for switches */
-  P2IE |= SWITCHES;		/* enable interrupts from switches */
-  P2OUT |= SWITCHES;		/* pull-ups for switches */
-  P2DIR &= ~SWITCHES;		/* set switches' bits for input */
-  switch_update_interrupt_sense();
-}
-
-int switches = 0;
-
-void
-switch_interrupt_handler()
-{
-  char p2val = switch_update_interrupt_sense();
-  switches = ~p2val & SWITCHES;
-  sw1 = (p2val & SW1)? 0 : 1;
-  sw2 = (p2val & SW2)? 0 : 1;
-  sw3 = (p2val & SW3)? 0 : 1;
-  sw4 = (p2val & SW4)? 0 : 1; 
-}
-
+////////////
+//swtiches.c  (where it used to be before i moved it)
+////////////
 
 void lvl1()
 {
@@ -119,35 +79,11 @@ void endScreen()
   fillRectangle(81, 97, 15, 15, COLOR_RED);     // lava
 }
 
-void update()
-{ 
-  if(1) {
-    switch (lvl) {
-    case 1:
-      x = 1;
-      y = 1;
-      lvl1();
-      break;
-    case 2:
-      x = 1;
-      y = 1;
-      lvl2();
-      break;
-    case 3:
-      x = 33;
-      y = 97;
-      endScreen();
-      break;
-    default:
-      x = 1;
-      y = 1;
-      lvl1();
-      break;
-    }
-  }
-}
+//////////////////
+//state_machineC.c  (where it used to be before i moved it)
+//////////////////
 
-int song = 0;
+int song = 1;
 int interrupts = 0;
 int c = 0;
 
@@ -332,12 +268,6 @@ void main()
   }
 }
 
-
-
-void
-__interrupt_vec(PORT2_VECTOR) Port_2(){
-  if (P2IFG & SWITCHES) {	      /* did a button cause this interrupt? */
-    P2IFG &= ~SWITCHES;		      /* clear pending sw interrupts */
-    switch_interrupt_handler();	/* single handler for all switches */
-  }
-}
+//////////////////////
+//p2_interrupt_handler (where it used to be before i moved it)
+//////////////////////
